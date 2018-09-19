@@ -9,13 +9,13 @@ package system
 import (
 	"fmt"
 
+	"github.com/shirou/gopsutil/cpu"
+
+	"github.com/DataDog/datadog-agent/pkg/aggregator"
 	"github.com/DataDog/datadog-agent/pkg/autodiscovery/integration"
 	"github.com/DataDog/datadog-agent/pkg/collector/check"
 	core "github.com/DataDog/datadog-agent/pkg/collector/corechecks"
 	"github.com/DataDog/datadog-agent/pkg/util/log"
-	"github.com/shirou/gopsutil/cpu"
-
-	"github.com/DataDog/datadog-agent/pkg/aggregator"
 )
 
 const cpuCheckName = "cpu"
@@ -79,7 +79,10 @@ func (c *CPUCheck) Run() error {
 
 // Configure the CPU check doesn't need configuration
 func (c *CPUCheck) Configure(data integration.Data, initConfig integration.Data) error {
-	// do nothing
+	err := c.CommonConfigure(initConfig)
+	if err != nil {
+		return err
+	}
 	// NOTE: This runs before the python checks, so we should be good, but cpuInfo()
 	//       on windows initializes COM to the multithreaded model. Therefore,
 	//       if a python check has run on this native windows thread prior and

@@ -41,6 +41,11 @@ func (c *processChk) Run() error {
 }
 
 func (c *processChk) Configure(data integration.Data, initConfig integration.Data) (err error) {
+	err := c.CommonConfigure(initConfig)
+	if err != nil {
+		return err
+	}
+
 	c.numprocs, err = pdhutil.GetCounterSet("System", "Processes", "", nil)
 	if err != nil {
 		return err

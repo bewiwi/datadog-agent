@@ -66,6 +66,16 @@ in any way.
 || `syslog_key`  | Syslog configuration client private key for TLS client validation |
 
 
+## Integrations init_config section
+
+In addition to integration-specific options, the agent supports the following
+options in the `init_config` section:
+
+* `min_collection_interval`: number of seconds between two runs of a given
+instance
+* `empty_default_hostname`: submit metrics / events / service checks with no
+hostname when the option is set to `true`
+
 ## Removed options
 
 This is the list of configuration options that were removed in the new Agent
