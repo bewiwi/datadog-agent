@@ -69,12 +69,12 @@ in any way.
 ## Integrations init_config section
 
 In addition to integration-specific options, the agent supports the following
-options in the `init_config` section:
+advanced options in the `init_config` section:
 
-* `min_collection_interval`: number of seconds between two runs of a given
-instance
-* `empty_default_hostname`: submit metrics / events / service checks with no
-hostname when the option is set to `true`
+* `min_collection_interval`: set a different run interval in seconds, for checks
+that should run less frequently than the default 15 seconds interval
+* `empty_default_hostname`: submit metrics, events and service checks with no
+hostname when set to `true`
 
 ## Removed options
 

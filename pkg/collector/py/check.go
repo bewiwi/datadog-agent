@@ -222,7 +222,7 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 	commonOptions := integration.CommonInitConfig{}
 	err = yaml.Unmarshal(initConfig, &commonOptions)
 	if err != nil {
-		log.Errorf("error in yaml %s", err)
+		log.Errorf("invalid init_config section for check %s: %s", string(c.id), err)
 		return err
 	}
 
@@ -235,7 +235,7 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 	if commonOptions.EmptyDefaultHostname {
 		s, err := aggregator.GetSender(c.id)
 		if err != nil {
-			log.Warnf("Failed to retrieve a Sender instance: %v", err)
+			log.Errorf("failed to retrieve a sender for check %s: %s", string(c.id), err)
 		} else {
 			s.DisableDefaultHostname(true)
 		}

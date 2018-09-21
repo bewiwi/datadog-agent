@@ -66,7 +66,7 @@ func (c *CheckBase) CommonConfigure(initConfig integration.Data) error {
 	commonOptions := integration.CommonInitConfig{}
 	err := yaml.Unmarshal(initConfig, &commonOptions)
 	if err != nil {
-		log.Errorf("error in yaml %s", err)
+		log.Errorf("invalid init_config section for check %s: %s", string(c.ID()), err)
 		return err
 	}
 
@@ -79,7 +79,7 @@ func (c *CheckBase) CommonConfigure(initConfig integration.Data) error {
 	if commonOptions.EmptyDefaultHostname {
 		s, err := aggregator.GetSender(c.checkID)
 		if err != nil {
-			log.Errorf("failed to retrieve a sender: %v", err)
+			log.Errorf("failed to retrieve a sender for check %s: %s", string(c.ID()), err)
 			return err
 		}
 		s.DisableDefaultHostname(true)
