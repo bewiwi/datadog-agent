@@ -54,7 +54,7 @@ func (c *CheckBase) BuildID(instance, initConfig integration.Data) {
 	c.checkID = check.BuildID(c.checkName, instance, initConfig)
 }
 
-// Configure is provided for checks that require no config. If overriden,
+// Configure is provided for checks that require no config. If overridden,
 // the call to CommonConfigure must be preserved.
 func (c *CheckBase) Configure(data integration.Data, initConfig integration.Data) error {
 	return c.CommonConfigure(initConfig)
