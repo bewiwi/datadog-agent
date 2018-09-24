@@ -66,10 +66,10 @@ in any way.
 || `syslog_key`  | Syslog configuration client private key for TLS client validation |
 
 
-## Integrations init_config section
+## Integrations instance configuration
 
 In addition to integration-specific options, the agent supports the following
-advanced options in the `init_config` section:
+advanced options in the `instance` section:
 
 * `min_collection_interval`: set a different run interval in seconds, for checks
 that should run less frequently than the default 15 seconds interval

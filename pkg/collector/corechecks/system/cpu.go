@@ -77,9 +77,9 @@ func (c *CPUCheck) Run() error {
 	return nil
 }
 
-// Configure the CPU check doesn't need configuration
+// Configure the CPU check
 func (c *CPUCheck) Configure(data integration.Data, initConfig integration.Data) error {
-	err := c.CommonConfigure(initConfig)
+	err := c.CommonConfigure(data)
 	if err != nil {
 		return err
 	}

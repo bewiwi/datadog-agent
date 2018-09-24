@@ -644,7 +644,7 @@ func (c *SNMPCheck) getSNMP() error {
 
 // Configure the check from YAML data
 func (c *SNMPCheck) Configure(data integration.Data, initConfig integration.Data) error {
-	err := c.CommonConfigure(initConfig)
+	err := c.CommonConfigure(data)
 	if err != nil {
 		return err
 	}

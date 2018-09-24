@@ -343,7 +343,7 @@ func (d *DockerCheck) Run() error {
 
 // Configure parses the check configuration and init the check
 func (d *DockerCheck) Configure(config, initConfig integration.Data) error {
-	err := d.CommonConfigure(initConfig)
+	err := d.CommonConfigure(config)
 	if err != nil {
 		return err
 	}

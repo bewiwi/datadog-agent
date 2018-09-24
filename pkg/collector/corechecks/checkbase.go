@@ -26,7 +26,7 @@ import (
 // - checks supporting multiple instances must call BuildID() from
 // their Config() method
 // - after optionally building a unique ID, CommonConfigure() must
-// be called from the Config() method to handle the common init_config
+// be called from the Config() method to handle the common instance
 // fields
 //
 // Integration warnings are handled via the Warn and Warnf methods
@@ -57,16 +57,16 @@ func (c *CheckBase) BuildID(instance, initConfig integration.Data) {
 // Configure is provided for checks that require no config. If overridden,
 // the call to CommonConfigure must be preserved.
 func (c *CheckBase) Configure(data integration.Data, initConfig integration.Data) error {
-	return c.CommonConfigure(initConfig)
+	return c.CommonConfigure(data)
 }
 
 // CommonConfigure is called when checks implement their own Configure method,
 // in order to setup common options (run interval, empty hostname)
-func (c *CheckBase) CommonConfigure(initConfig integration.Data) error {
-	commonOptions := integration.CommonInitConfig{}
-	err := yaml.Unmarshal(initConfig, &commonOptions)
+func (c *CheckBase) CommonConfigure(instance integration.Data) error {
+	commonOptions := integration.CommonInstanceConfig{}
+	err := yaml.Unmarshal(instance, &commonOptions)
 	if err != nil {
-		log.Errorf("invalid init_config section for check %s: %s", string(c.ID()), err)
+		log.Errorf("invalid instance section for check %s: %s", string(c.ID()), err)
 		return err
 	}
 

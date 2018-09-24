@@ -219,10 +219,10 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 		return err
 	}
 
-	commonOptions := integration.CommonInitConfig{}
-	err = yaml.Unmarshal(initConfig, &commonOptions)
+	commonOptions := integration.CommonInstanceConfig{}
+	err = yaml.Unmarshal(data, &commonOptions)
 	if err != nil {
-		log.Errorf("invalid init_config section for check %s: %s", string(c.id), err)
+		log.Errorf("invalid instance section for check %s: %s", string(c.id), err)
 		return err
 	}
 
