@@ -6,12 +6,11 @@
 package logs
 
 import (
-	"github.com/DataDog/datadog-agent/pkg/util/log"
-
 	"github.com/DataDog/datadog-agent/pkg/logs/config"
 	"github.com/DataDog/datadog-agent/pkg/logs/scheduler"
 	"github.com/DataDog/datadog-agent/pkg/logs/service"
 	"github.com/DataDog/datadog-agent/pkg/logs/status"
+	"github.com/DataDog/datadog-agent/pkg/util/log"
 )
 
 var (
@@ -26,6 +25,9 @@ var (
 
 // Start starts logs-agent
 func Start() error {
+	if IsAgentRunning() {
+		return nil
+	}
 	// setup the server config
 	serverConfig, err := config.BuildServerConfig()
 	if err != nil {
@@ -44,9 +46,10 @@ func Start() error {
 
 	// setup and start the agent
 	agent = NewAgent(sources, services, serverConfig)
-	log.Info("Starting logs-agent")
+	log.Info("Starting logs-agent...")
 	agent.Start()
 	isRunning = true
+	log.Info("logs-agent started")
 
 	// add the default sources
 	for _, source := range config.DefaultSources() {
@@ -59,10 +62,17 @@ func Start() error {
 // Stop stops properly the logs-agent to prevent data loss,
 // it only returns when the whole pipeline is flushed.
 func Stop() {
-	if isRunning {
-		log.Info("Stopping logs-agent")
+	log.Info("Stopping logs-agent...")
+	if agent != nil {
 		agent.Stop()
+		agent = nil
 	}
+	if adScheduler != nil {
+		adScheduler.Stop()
+		adScheduler = nil
+	}
+	status.Clear()
+	log.Info("logs-agent stopped")
 }
 
 // IsAgentRunning returns true if the logs-agent is running.
@@ -72,7 +82,7 @@ func IsAgentRunning() bool {
 
 // GetStatus returns logs-agent status
 func GetStatus() status.Status {
-	if !isRunning {
+	if !IsAgentRunning() {
 		return status.Status{IsRunning: false}
 	}
 	return status.Get()

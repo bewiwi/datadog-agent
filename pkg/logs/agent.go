@@ -6,6 +6,8 @@
 package logs
 
 import (
+	"time"
+
 	"github.com/DataDog/datadog-agent/pkg/logs/auditor"
 	"github.com/DataDog/datadog-agent/pkg/logs/config"
 	"github.com/DataDog/datadog-agent/pkg/logs/input/container"
@@ -18,6 +20,7 @@ import (
 	"github.com/DataDog/datadog-agent/pkg/logs/restart"
 	"github.com/DataDog/datadog-agent/pkg/logs/sender"
 	"github.com/DataDog/datadog-agent/pkg/logs/service"
+	"github.com/DataDog/datadog-agent/pkg/util/log"
 )
 
 // Agent represents the data pipeline that collects, decodes,
@@ -29,6 +32,7 @@ import (
 // + ------------------------------------------------------ +
 type Agent struct {
 	auditor          *auditor.Auditor
+	connManager      *sender.ConnectionManager
 	pipelineProvider pipeline.Provider
 	inputs           []restart.Restartable
 }
@@ -54,6 +58,7 @@ func NewAgent(sources *config.LogSources, services *service.Services, serverConf
 
 	return &Agent{
 		auditor:          auditor,
+		connManager:      connectionManager,
 		pipelineProvider: pipelineProvider,
 		inputs:           inputs,
 	}
@@ -62,7 +67,7 @@ func NewAgent(sources *config.LogSources, services *service.Services, serverConf
 // Start starts all the elements of the data pipeline
 // in the right order to prevent data loss
 func (a *Agent) Start() {
-	starter := restart.NewStarter(a.auditor, a.pipelineProvider)
+	starter := restart.NewStarter(a.auditor, a.connManager, a.pipelineProvider)
 	for _, input := range a.inputs {
 		starter.Add(input)
 	}
@@ -81,5 +86,23 @@ func (a *Agent) Stop() {
 		a.pipelineProvider,
 		a.auditor,
 	)
-	stopper.Stop()
+
+	// This will try to stop everything in order, including the potentially blocking
+	// parts like the sender. After StopTimeout it will just stop the last part of the
+	// pipeline, disconnecting it from the auditor, to make sure that everything can
+	// stop.
+	// TODO: Add this feature in the stopper.
+	c := make(chan struct{})
+	go func() {
+		stopper.Stop()
+		close(c)
+	}()
+	timeout := config.LogsAgent.GetDuration("logs_config.stop_grace_period")
+	select {
+	case <-c:
+	case <-time.After(timeout):
+		log.Info("timed out when stopping agent, forcing is to stop now")
+		a.connManager.Stop()
+		<-c
+	}
 }

@@ -6,6 +6,8 @@
 package pipeline
 
 import (
+	"github.com/DataDog/datadog-agent/pkg/logs/config"
+	"github.com/DataDog/datadog-agent/pkg/logs/sender"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -17,10 +19,18 @@ type ProviderTestSuite struct {
 }
 
 func (suite *ProviderTestSuite) SetupTest() {
+	connManager := sender.NewConnectionManager(config.NewServerConfig("fake", 0, false), "")
+	connManager.Start()
+
 	suite.p = &provider{
 		numberOfPipelines: 3,
 		pipelines:         []*Pipeline{},
+		connManager:       connManager,
 	}
+}
+
+func (suite *ProviderTestSuite) TearDownTest() {
+	suite.p.connManager.Stop()
 }
 
 func (suite *ProviderTestSuite) TestProvider() {
