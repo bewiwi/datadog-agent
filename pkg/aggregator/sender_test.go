@@ -30,7 +30,7 @@ func resetAggregator() {
 
 func TestGetDefaultSenderReturnsSameSender(t *testing.T) {
 	resetAggregator()
-	InitAggregator(nil, "")
+	InitAggregator(nil, "", "")
 
 	s, err := GetDefaultSender()
 	assert.Nil(t, err)
@@ -46,7 +46,7 @@ func TestGetDefaultSenderReturnsSameSender(t *testing.T) {
 
 func TestGetSenderWithDifferentIDsReturnsDifferentCheckSamplers(t *testing.T) {
 	resetAggregator()
-	InitAggregator(nil, "")
+	InitAggregator(nil, "", "")
 
 	s, err := GetSender(checkID1)
 	assert.Nil(t, err)
@@ -69,7 +69,7 @@ func TestGetSenderWithDifferentIDsReturnsDifferentCheckSamplers(t *testing.T) {
 
 func TestGetSenderWithSameIDsReturnsSameSender(t *testing.T) {
 	resetAggregator()
-	InitAggregator(nil, "")
+	InitAggregator(nil, "", "")
 
 	sender1, err := GetSender(checkID1)
 	assert.Nil(t, err)
@@ -86,7 +86,7 @@ func TestGetSenderWithSameIDsReturnsSameSender(t *testing.T) {
 
 func TestDestroySender(t *testing.T) {
 	resetAggregator()
-	InitAggregator(nil, "")
+	InitAggregator(nil, "", "")
 
 	_, err := GetSender(checkID1)
 	assert.Nil(t, err)
@@ -102,7 +102,7 @@ func TestDestroySender(t *testing.T) {
 
 func TestGetAndSetSender(t *testing.T) {
 	resetAggregator()
-	InitAggregator(nil, "")
+	InitAggregator(nil, "", "")
 
 	senderMetricSampleChan := make(chan senderMetricSample, 10)
 	serviceCheckChan := make(chan metrics.ServiceCheck, 10)
