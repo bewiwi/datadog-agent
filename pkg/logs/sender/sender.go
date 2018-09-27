@@ -80,9 +80,8 @@ func (s *Sender) run() {
 			// If we need to exit we must still read all the input chan to unblock our producers.
 			continue
 		default:
+			s.wireMessage(payload)
 		}
-
-		s.wireMessage(payload)
 	}
 }
 
