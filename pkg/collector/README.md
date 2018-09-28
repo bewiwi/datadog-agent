@@ -15,7 +15,6 @@ For further details, please refer to the specific READMEs:
 
 * [check](check/README.md)
 * [corechecks](corechecks/README.md)
-* [metadata](metadata/README.md)
 * [py](py/README.md)
 * [runner](runner/README.md)
 * [scheduler](scheduler/README.md)
